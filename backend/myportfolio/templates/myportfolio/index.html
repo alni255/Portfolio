@@ -1013,7 +1013,6 @@
 
 <!-- Script pour les animations (celui que vous avez déjà) -->
 <script>
-
 // Fonction pour récupérer le token CSRF
 function getCookie(name) {
     let cookieValue = null;
@@ -1092,6 +1091,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: formData
                 });
 
+                //  Vérifier si la réponse est bien du JSON
+                const contentType = response.headers.get('content-type') || '';
+
+                if (!contentType.includes('application/json')) {
+                    // Si Django renvoie une page HTML (souvent erreur serveur)
+                    const text = await response.text();
+                    console.error('Réponse non JSON reçue :', text);
+                    showAlert('error', "Erreur serveur : la réponse n'est pas au format JSON.");
+                    return;
+                }
+
                 const result = await response.json();
 
                 if (result.success) {
@@ -1111,10 +1121,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     } else {
-        console.error('❌ Formulaire de contact NON trouvé!');
+        console.error(' Formulaire de contact NON trouvé!');
     }
 });
-
 
 // Navigation active
 const sections = document.querySelectorAll('section');
@@ -1194,3 +1203,4 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Initialiser les barres de compétences après chargement
 document.addEventListener('DOMContentLoaded', animateSkillBars);
 </script>
+
